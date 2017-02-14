@@ -1,0 +1,101 @@
+{{ga-embed-authorize}}
+
+{{#if gaEmbed.isAuthorized}}
+
+  {{log gaEmbed.authorizedUser}}
+
+  <button {{ action (route-action 'toggleChartView') }}>
+    {{lineChartView.name}}
+  </button>
+
+  {{ga-embed-line-chart
+      query=(hash
+        ids=lineChartView.id
+        metrics="ga:sessions"
+        dimensions="ga:date"
+        start-date="30daysAgo"
+        end-date="yesterday")
+      width="100%"
+      backgroundColor="#DDD"
+      title=lineChartTitle }}
+
+  {{input value=lineChartTitle}}
+
+  {{ga-embed-bar-chart
+      query=(hash
+        ids=lineChartView.id
+        metrics="ga:sessions"
+        dimensions="ga:date"
+        start-date=barChartTimeframe
+        end-date="yesterday")
+      width="100%"
+      title="A test bar chart" }}
+
+  <button {{ action (route-action 'toggleBarChartTimeframe') }}>
+    {{barChartTimeframe}}
+  </button>
+
+  {{ga-embed-column-chart
+      query=(hash
+        ids=lineChartView.id
+        metrics="ga:sessions"
+        dimensions="ga:date"
+        start-date=barChartTimeframe
+        end-date="yesterday")
+      width="100%"
+      title="A test column chart" }}
+
+
+  {{ga-embed-geo-chart
+      query=(hash
+        ids=lineChartView.id
+        metrics="ga:sessions"
+        dimensions="ga:country"
+        start-date="30daysAgo"
+        sort="-ga:sessions"
+        end-date="today"
+      )
+      region=geoChartRegion
+      width="100%"
+      title="A test geo chart" }}
+
+  {{input value=geoChartRegion}}
+
+  {{ga-embed-pie-chart
+      query=(hash
+        ids=lineChartView.id
+        metrics="ga:sessions"
+        dimensions="ga:country"
+        start-date="30daysAgo"
+        sort="-ga:sessions"
+        max-results=10
+        end-date="today"
+      )
+      is3D=pieChartIs3d
+      width="100%"}}
+
+  <button {{ action (toggle 'pieChartIs3d' this) }}>
+    {{if pieChartIs3d 'Flatten' 'Make 3D'}}
+  </button>
+
+  {{ga-embed-table
+      query=(hash
+        ids=lineChartView.id
+        metrics="ga:sessions"
+        dimensions="ga:country"
+        start-date="30daysAgo"
+        sort="-ga:sessions"
+        max-results=10
+        end-date="today"
+      )
+      width="100%"}}
+
+  <button {{ action (route-action 'getCustomData') }}>
+    Get Custom Data
+  </button>
+
+  <button {{ action (route-action 'signOut') }}>
+    Sign Out
+  </button>
+
+{{/if}}

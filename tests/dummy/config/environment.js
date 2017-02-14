@@ -23,6 +23,10 @@ module.exports = function(environment) {
     }
   };
 
+  ENV['google-analytics-embed'] = {
+    clientId: '972174397080-feklidu3p1r0u78lsg4356i9pa5442r7.apps.googleusercontent.com'
+  };
+
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
