@@ -7,6 +7,8 @@ export default BaseChartVisualization.extend({
     options: {}
   },
 
+  classNames: ['ga-embed-pie-chart'],
+
   visualizationOptions: [
     'backgroundColor', 'chartArea', 'colors',
     'enableInteractivity', 'fontSize', 'fontName',

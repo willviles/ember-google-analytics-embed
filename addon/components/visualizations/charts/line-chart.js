@@ -7,6 +7,8 @@ export default BaseChartVisualization.extend({
     options: {}
   },
 
+  classNames: ['ga-embed-line-chart'],
+
   visualizationOptions: [
     // Animation
     'animation',

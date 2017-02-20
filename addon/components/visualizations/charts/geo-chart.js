@@ -12,6 +12,8 @@ export default BaseChartVisualization.extend({
     options: {}
   },
 
+  classNames: ['ga-embed-geo-chart'],
+
   visualizationOptions: [
     'backgroundColor',
     'colorAxis',

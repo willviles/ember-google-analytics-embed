@@ -3,12 +3,18 @@ import Ember from 'ember';
 const {
   $, assert, assign, computed,
   get, getWithDefault, inject: { service },
-  isBlank, isPresent, run, set, typeOf
+  isBlank, isPresent, run, set, setProperties,
+  typeOf
 } = Ember;
 
 export default Ember.Component.extend({
 
   gaEmbed: service(),
+
+  classNames: ['ga-embed-visualization'],
+  classNameBindings: ['isLoading:ga-embed-visualization-loading'],
+
+  isLoading: true,
 
   requiredOptions: [],
   _requiredOptions: Ember.A(['query']),
@@ -55,7 +61,10 @@ export default Ember.Component.extend({
 
   didCreateVisualization() {
     get(this, 'visualization').on('success', data => {
-      set(this, 'data', data);
+      setProperties(this, {
+        data,
+        isLoading: false
+      });
     });
 
   },

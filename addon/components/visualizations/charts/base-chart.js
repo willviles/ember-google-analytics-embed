@@ -10,6 +10,8 @@ export default BaseVisualization.extend({
     options: {}
   },
 
+  classNames: ['ga-embed-chart'],
+
   mergeInitialOptions() {
     set(this, 'chart.options', get(this, 'mergedOptions'));
 

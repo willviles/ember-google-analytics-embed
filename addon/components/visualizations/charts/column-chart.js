@@ -7,6 +7,8 @@ export default BaseChartVisualization.extend({
     options: {}
   },
 
+  classNames: ['ga-embed-column-chart'],
+
   visualizationOptions: [
     // Animation
     'animation',

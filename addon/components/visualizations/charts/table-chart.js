@@ -7,6 +7,8 @@ export default BaseChartVisualization.extend({
     options: {}
   },
 
+  classNames: ['ga-embed-table'],
+
   visualizationOptions: [
     'allowHtml', 'alternatingRowStyle', 'cssClassNames',
     'firstRowNumber', 'frozenColumns', 'height',
