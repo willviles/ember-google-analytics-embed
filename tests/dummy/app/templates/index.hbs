@@ -2,8 +2,6 @@
 
 {{#if gaEmbed.isAuthorized}}
 
-  {{log gaEmbed.authorizedUser}}
-
   <button {{ action (route-action 'toggleChartView') }}>
     {{lineChartView.name}}
   </button>

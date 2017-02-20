@@ -1,10 +1,13 @@
 import Ember from 'ember';
 
-const { assert, get, inject: { service }, set } = Ember;
+const { assert, get, inject: { service }, observer, set } = Ember;
 
 export default Ember.Component.extend({
 
   gaEmbed: service(),
+
+  classNames: ['ga-embed-authorize'],
+  classNameBindings: ['gaEmbed.isAuthorized:ga-embed-is-authorized'],
 
   clientId: null,
 
@@ -32,6 +35,16 @@ export default Ember.Component.extend({
 
     });
 
-  }
+  },
+
+  hideOnAuthorize: observer('gaEmbed.isAuthorized', function() {
+    const isAuthorized = get(this, 'gaEmbed.isAuthorized');
+    let display = isAuthorized ? 'none' : 'block';
+
+    Ember.run.next(() => {
+      this.$().css({ display });
+    });
+
+  })
 
 });
