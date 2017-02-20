@@ -1,6 +1,7 @@
-# Ember Google Analytics Embed
+Ember Google Analytics Embed [![npm](https://img.shields.io/npm/v/ember-google-analytics-embed.svg)](https://www.npmjs.com/package/ember-google-analytics-embed)
+======
 
-Ember Google Analytics Embed is an addon for adding analytics visualizations to your app using the [Google Analytics Embed API](https://developers.google.com/analytics/devguides/reporting/embed/v1/).
+**Ember Google Analytics Embed** is an addon for adding analytics visualizations to your Ember.js applications using the [Google Analytics Embed API](https://developers.google.com/analytics/devguides/reporting/embed/v1/).
 
 The addon exposes the following components to use in your templates:
 
