@@ -11,7 +11,7 @@ The addon exposes the following components to use in your templates:
 - [Pie Chart](#pie-chart) *(ga-embed-pie-chart)*
 - [Table](#table) *(ga-embed-table)*
 
-The addon also enables Analytics user authorization using the [authorization](#authorization) *(ga-embed-authorize)* component.
+The addon also enables Analytics user authorization using the [authorization](#authorization) *(ga-embed-authorize)* component and view selection via the [view selector](#view-selection) *(ga-embed-view-selector)* component.
 
 ## Demos
 
@@ -73,11 +73,9 @@ actions: {
 ### Access Token Authorization
 To remove the process of user authorization, you may return an access token from your server. This functionality is not yet implemented in Ember Google Analytics Embed, but you can find more information on server side authorization [here](https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/).
 
-## Usage
+## Query
 
-Each chart accepts two main attributes, a query and an options hash.
-
-### Query
+Each visualization accepts two main attributes, a query and an options hash.
 
 To get data from our Google Analytics property, we must build a query using the [Google Reporting API](https://developers.google.com/analytics/devguides/reporting/core/v4/). The example below shows a pie chart of sessions, segmented by country. It limits the data to the last 30 days up until today and requests just the top ten results.
 
@@ -94,7 +92,7 @@ To get data from our Google Analytics property, we must build a query using the 
     )}}
 ```
 
-### Options
+## Options
 
 An options hash may be passed to each chart, allowing full configuration of the visualization.
 
@@ -167,6 +165,26 @@ Creates a table visualization and accepts the following configuration [options](
 {{ga-embed-table query=query options=options}}
 ```
 
+## View Selection
+
+The `ga-embed-view-selector` component allows the user to select a view from any property they are authorized to view. Add the view selector component to your template.
+
+```handlebars
+{{#if gaEmbed.isAuthorized}}
+  {{ga-embed-view-selector ids=(mut viewIds) onChange=(action 'customAction')}}
+{{/if}}
+```
+
+Use the mutated property in your queries:
+
+```handlebars
+{{ga-embed-pie-chart
+    query=(hash
+      ids=viewIds
+      // ...
+    )}}
+```
+
 ## Querying Data
 
 The `gaEmbed` service enables a quick method to query data from analytics without directly using a visualization.
@@ -195,3 +213,17 @@ get(this, 'gaEmbed').getData({
 
 - [Google Reporting API](https://developers.google.com/analytics/devguides/reporting/core/v4/)
   - [Dimensions & Metrics Explorer](https://developers.google.com/analytics/devguides/reporting/core/dimsmets)
+
+## Contributing
+
+A crude dummy app demonstrates all the functionality of the addon. To view the dummy app, clone the repo and export your client id from `tests/dummy/config/ga-client-id.js` like so:
+
+```javascript
+module.exports = 'YOUR_CLIENT_ID';
+```
+
+Then start the server using:
+
+```
+ember serve
+```

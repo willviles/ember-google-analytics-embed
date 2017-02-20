@@ -11,10 +11,7 @@ export default Ember.Route.extend({
 
   model() {
     return Ember.RSVP.resolve({
-      lineChartView: {
-        name: 'All Website Data',
-        id: 'ga:138780399'
-      },
+      viewIds: null,
       lineChartTitle: 'You may change this title in the text box below',
       barChartTimeframe: '30daysAgo',
       pieChartIs3d: false,
@@ -43,31 +40,6 @@ export default Ember.Route.extend({
 
   actions: {
 
-    toggleChartView() {
-
-      const currentChartView = get(this, 'controller.lineChartView');
-
-      let newChartView;
-
-      if (currentChartView.name === 'All Website Data') {
-        newChartView = {
-          name: 'User Data',
-          id: 'ga:139693274'
-        };
-
-      } else {
-        newChartView = {
-          name: 'All Website Data',
-          id: 'ga:138780399'
-        };
-
-      }
-
-      set(this, 'controller.lineChartView', newChartView);
-      this.notifyPropertyChange('controller.lineChartView.id');
-
-    },
-
     toggleBarChartTimeframe() {
       set(this, 'controller.barChartTimeframe',
         get(this, 'controller.barChartTimeframe') === '30daysAgo' ? '7daysAgo' : '30daysAgo'
@@ -83,8 +55,12 @@ export default Ember.Route.extend({
 
     getCustomData() {
 
+      const viewIds = get(this, 'controller.viewIds');
+
+      if (!viewIds) { return; }
+
       get(this, 'gaEmbed').getData({
-        'ids': 'ga:138780399',
+        'ids': viewIds,
         'metrics': 'ga:sessions',
         'dimensions': 'ga:date',
         'start-date': '30daysAgo',
@@ -94,6 +70,11 @@ export default Ember.Route.extend({
       }).catch(err => {
         console.log(err);
       });
+
+    },
+
+    viewChanged(ids) {
+      set(this, 'controller.viewIds', ids);
 
     }
 
