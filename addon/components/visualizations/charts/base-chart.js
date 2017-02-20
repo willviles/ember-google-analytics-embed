@@ -18,7 +18,10 @@ export default BaseVisualization.extend({
   },
 
   createVisualization() {
-    return new window.gapi.analytics.googleCharts.DataChart();
+    const container = this.elementId;
+    return new window.gapi.analytics.googleCharts.DataChart({
+      chart: { container }
+    });
 
   },
 

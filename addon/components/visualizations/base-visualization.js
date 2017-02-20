@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 const {
-  $, assert, assign, computed,
+  $, assert, computed,
   get, getWithDefault, inject: { service },
   isBlank, isPresent, run, run: { debounce },
   set, setProperties, typeOf
@@ -15,7 +15,6 @@ export default Ember.Component.extend({
   classNameBindings: ['isLoading:ga-embed-visualization-loading'],
 
   isLoading: true,
-  responsiveResize: true,
 
   requiredOptions: [],
   _requiredOptions: Ember.A(['query']),
@@ -31,7 +30,7 @@ export default Ember.Component.extend({
     this._super(...arguments);
 
     this._assertRequiredOptions();
-    this._setContainer();
+    this._setResize();
 
     if (get(this, 'gaEmbed.apiReady')) {
       this._updateVisualization();
@@ -149,12 +148,11 @@ export default Ember.Component.extend({
 
   },
 
-  _setContainer() {
-    assign(get(this, 'chart'), { container: this.elementId });
+  responsiveResize: true,
 
-    if (get(this, 'responsiveResize')) {
-      $(window).on(`resize.${get(this, 'elementId')}`, () => debounce(this, '_handleResize', 200));
-    }
+  _setResize() {
+    if (!get(this, 'responsiveResize')) { return; }
+    $(window).on(`resize.${get(this, 'elementId')}`, () => debounce(this, '_handleResize', 200));
 
   },
 
