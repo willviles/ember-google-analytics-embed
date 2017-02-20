@@ -3,8 +3,8 @@ import Ember from 'ember';
 const {
   $, assert, assign, computed,
   get, getWithDefault, inject: { service },
-  isBlank, isPresent, run, set, setProperties,
-  typeOf
+  isBlank, isPresent, run, run: { debounce },
+  set, setProperties, typeOf
 } = Ember;
 
 export default Ember.Component.extend({
@@ -15,6 +15,7 @@ export default Ember.Component.extend({
   classNameBindings: ['isLoading:ga-embed-visualization-loading'],
 
   isLoading: true,
+  responsiveResize: true,
 
   requiredOptions: [],
   _requiredOptions: Ember.A(['query']),
@@ -151,6 +152,15 @@ export default Ember.Component.extend({
   _setContainer() {
     assign(get(this, 'chart'), { container: this.elementId });
 
-  }
+    if (get(this, 'responsiveResize')) {
+      $(window).on(`resize.${get(this, 'elementId')}`, () => debounce(this, '_handleResize', 200));
+    }
+
+  },
+
+  _handleResize() {
+    this.updateVisualization();
+
+  },
 
 });
