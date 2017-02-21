@@ -54,6 +54,8 @@ export default BaseVisualization.extend({
   updateVisualization() {
     let { query, chart, visualization } = getProperties(this, 'query', 'chart', 'visualization');
 
+    if (!visualization) { return; }
+
     query = pojo(query); chart = pojo(chart);
 
     visualization.set({ query, chart });

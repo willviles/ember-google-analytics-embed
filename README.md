@@ -176,6 +176,10 @@ Each visualization has a loading state class of `.ga-embed-visualization-loading
 
 By default, visualizations auto resize on window resize. To disable auto resizing, set `responsiveResize=false` on the visualization.
 
+### Debouncing
+
+When dynamically updating many properties on a visualization, it may be beneficial to debounce executing a new render. To do so, the visualization accepts a `debounce` value in milliseconds (ms).
+
 ## View Selection
 
 The `ga-embed-view-selector` component allows the user to select a view from any property they are authorized to view. Add the view selector component to your template.

@@ -15,6 +15,7 @@ export default Ember.Component.extend({
   classNameBindings: ['isLoading:ga-embed-visualization-loading'],
 
   isLoading: true,
+  debounce: false,
 
   requiredOptions: [],
   _requiredOptions: Ember.A(['query']),
@@ -78,13 +79,22 @@ export default Ember.Component.extend({
   },
 
   newVisualizationAttrs() {
-    run.cancel(
-      get(this, '_willUpdateVisualization')
-    );
 
-    set(this, '_willUpdateVisualization', run.later(this, () => {
+    const debounce = get(this, 'debounce');
+
+    if (debounce && typeOf(debounce) === 'number') {
+      run.cancel(
+        get(this, '_willUpdateVisualization')
+      );
+
+      set(this, '_willUpdateVisualization', run.later(this, () => {
+        this.willUpdateVisualization();
+      }, debounce / 2));
+
+    } else {
       this.willUpdateVisualization();
-    }, 250));
+
+    }
 
   },
 
@@ -104,13 +114,21 @@ export default Ember.Component.extend({
   },
 
   execute() {
-    run.cancel(
-      get(this, 'willExecute')
-    );
+    const debounce = get(this, 'debounce');
 
-    set(this, 'willExecute', run.later(this, () => {
+    if (debounce && typeOf(debounce) === 'number') {
+      run.cancel(
+        get(this, 'willExecute')
+      );
+
+      set(this, 'willExecute', run.later(this, () => {
+        get(this, 'visualization').execute();
+      }, debounce / 2));
+
+    } else {
       get(this, 'visualization').execute();
-    }, 250));
+
+    }
 
   },
 
