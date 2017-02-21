@@ -1,7 +1,7 @@
 Ember Google Analytics Embed [![npm](https://img.shields.io/npm/v/ember-google-analytics-embed.svg)](https://www.npmjs.com/package/ember-google-analytics-embed)
 ======
 
-**Ember Google Analytics Embed** is an addon for adding analytics visualizations to your Ember.js applications using the [Google Analytics Embed API](https://developers.google.com/analytics/devguides/reporting/embed/v1/).
+**Ember Google Analytics Embed** is an addon for quickly building custom Google Analytics dashboards in your Ember.js app, using the [Google Analytics Embed API](https://developers.google.com/analytics/devguides/reporting/embed/v1/).
 
 The addon exposes the following components to use in your templates:
 
@@ -33,7 +33,8 @@ ENV['google-analytics-embed'] = {
 };
 ```
 
-### Authorization
+
+## Authorization
 Each user will need to have access to the GA account queried and authorize themselves. Adding the `ga-embed-authorize` component to your templates will create a 'Sign in to Google Analytics' button and handle authorization automatically:
 
 ```handlebars
@@ -74,9 +75,12 @@ actions: {
 ### Access Token Authorization
 To remove the process of user authorization, you may return an access token from your server. This functionality is not yet implemented in Ember Google Analytics Embed, but you can find more information on server side authorization [here](https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/).
 
-## Query
+
+## Visualizations
 
 Each visualization accepts two main attributes, a query and an options hash.
+
+### Query
 
 To get data from our Google Analytics property, we must build a query using the [Google Reporting API](https://developers.google.com/analytics/devguides/reporting/core/v4/). The example below shows a pie chart of sessions, segmented by country. It limits the data to the last 30 days up until today and requests just the top ten results.
 
@@ -93,7 +97,7 @@ To get data from our Google Analytics property, we must build a query using the 
     )}}
 ```
 
-## Options
+### Options
 
 An options hash may be passed to each chart, allowing full configuration of the visualization.
 
@@ -112,9 +116,10 @@ Individual options properties may also be passed and can be dynamically updated.
     }}
 ```
 
-## Visualizations
 
-### Bar Chart
+### Components
+
+#### Bar Chart
 
 Creates a bar chart visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/barchart#configuration-options).
 
@@ -122,7 +127,7 @@ Creates a bar chart visualization and accepts the following configuration [optio
 {{ga-embed-bar-chart query=query options=options}}
 ```
 
-### Column Chart
+#### Column Chart
 
 Creates a column chart visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/columnchart#configuration-options).
 
@@ -130,7 +135,7 @@ Creates a column chart visualization and accepts the following configuration [op
 {{ga-embed-column-chart query=query options=options}}
 ```
 
-### Geo Chart
+#### Geo Chart
 
 Creates a geo chart visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart#configuration-options).
 
@@ -140,7 +145,7 @@ The region property can be dynamically updated and is validated before the chart
 {{ga-embed-geo-chart query=query options=options region=region}}
 ```
 
-### Line Chart
+#### Line Chart
 
 Creates a line chart visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/linechart#configuration-options).
 
@@ -148,7 +153,7 @@ Creates a line chart visualization and accepts the following configuration [opti
 {{ga-embed-line-chart query=query options=options}}
 ```
 
-### Pie Chart
+#### Pie Chart
 
 Creates a pie chart visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/piechart#configuration-options).
 
@@ -158,7 +163,7 @@ To transform a pie chart into a donut chart, simply add a value for the pie hole
 {{ga-embed-pie-chart query=query options=options pieHole=0.4}}
 ```
 
-### Table
+#### Table
 
 Creates a table visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/tablechart#configuration-options).
 
@@ -166,23 +171,34 @@ Creates a table visualization and accepts the following configuration [options](
 {{ga-embed-table query=query options=options}}
 ```
 
----
 
 ### Loading State
 
-Each visualization has a loading state class of `.ga-embed-visualization-loading`, which you can customise in your CSS.
+Each visualization has a loading state class of `.ga-embed-visualization-loading`, which you can customize in your CSS. The classes set on visualizations allow for custom loading states per visualization.
+
+```html
+<div id="ember123" class="ga-embed-visualization ga-embed-chart ga-embed-line-chart ga-embed-visualization-loading">...</div>
+```
 
 ### Auto Resizing
 
 By default, visualizations auto resize on window resize. To disable auto resizing, set `responsiveResize=false` on the visualization.
 
+```handlebars
+{{ga-embed-line-chart query=query options=options responsiveResize=false}}
+```
+
 ### Debouncing
 
 When dynamically updating many properties on a visualization, it may be beneficial to debounce executing a new render. To do so, the visualization accepts a `debounce` value in milliseconds (ms).
 
+```handlebars
+{{ga-embed-line-chart query=query options=options debounce=100}}
+```
+
 ## View Selection
 
-The `ga-embed-view-selector` component allows the user to select a view from any property they are authorized to view. Add the view selector component to your template.
+The `ga-embed-view-selector` component allows the user to select a view from any property they are authorized on. Add the view selector component to your template.
 
 ```handlebars
 {{#if gaEmbed.isAuthorized}}
@@ -190,7 +206,7 @@ The `ga-embed-view-selector` component allows the user to select a view from any
 {{/if}}
 ```
 
-Use the mutated property in your queries:
+Use the mutable property in your queries:
 
 ```handlebars
 {{ga-embed-pie-chart
@@ -200,9 +216,10 @@ Use the mutated property in your queries:
     )}}
 ```
 
-## Querying Data
 
-The `gaEmbed` service enables a quick method to query data from analytics without directly using a visualization.
+## Querying the Reporting API
+
+The `gaEmbed` service enables a quick method to query data from analytics without directly using a visualization. This can be useful for querying the Google Analytics Reporting API and using the data in your own custom components.
 
 ```javascript
 get(this, 'gaEmbed').getData({
