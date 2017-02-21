@@ -57,6 +57,32 @@ export default Ember.Service.extend(Ember.Evented, {
 
   },
 
+  geoApisInitialized: false,
+
+  initializeGeoApis() {
+
+    const apiKey = get(this, 'config.apiKey');
+
+    assert('[ember-google-analytics-embed] No API Key for loading Google Maps APIs set in config/environment.js', apiKey);
+
+    if (!apiKey) { return; }
+
+    /* jshint ignore:start */
+    (function(w,d,s,g,js,fjs){
+      if (!w.google) { js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
+                       js.src=g;fjs.parentNode.insertBefore(js,fjs); }
+    }(window,document,'script',`https://www.google.com/jsapi`));
+
+    (function(w,d,s,m,js,fjs){
+      js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
+      js.src=m;fjs.parentNode.insertBefore(js,fjs);
+    }(window,document,'script',`http://maps.googleapis.com/maps/api/js?key=${apiKey}`));
+    /* jshint ignore:end */
+
+    set(this, 'geoApisInitialized', true);
+
+  },
+
   getData(query) {
 
     assert(`[ember-google-analytics-embed] no 'query' passed to getData() ember-google-analytics-embed/services/ga-embed`, query);

@@ -17,4 +17,4 @@ npm-debug.log*
 testem.log
 
 # custom
-/tests/dummy/config/ga-client-id.js
+/tests/dummy/config/keys.js

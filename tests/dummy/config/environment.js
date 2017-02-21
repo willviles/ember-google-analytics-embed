@@ -2,7 +2,7 @@
 /* global require */
 
 // To use the dummy app, export your client id from '/tests/dummy/config/ga-client-id.js'
-var gaClientId = require('./ga-client-id');
+var keys = require('./keys');
 
 module.exports = function(environment) {
   var ENV = {
@@ -28,7 +28,8 @@ module.exports = function(environment) {
   };
 
   ENV['google-analytics-embed'] = {
-    clientId: gaClientId
+    clientId: keys.clientId,
+    apiKey: keys.apiKey
   };
 
   if (environment === 'development') {

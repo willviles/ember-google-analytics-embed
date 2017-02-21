@@ -34,6 +34,11 @@ export default BaseChartVisualization.extend({
     'width'
   ],
 
+  willInsertElement() {
+    this._super(...arguments);
+    this._loadGeoApis();
+  },
+
   willUpdateVisualization() {
     this._validateRegion();
     this._super(...arguments);
@@ -53,6 +58,13 @@ export default BaseChartVisualization.extend({
       delete chartOptions.region;
       return assert(`[ember-google-analytics-embed] Invalid region passed to ga-embed-geo-chart component. For valid region codes, reference https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart#continent-hierarchy-and-codes.`);
     }
+
+  },
+
+  _loadGeoApis() {
+    const gaEmbedService = get(this, 'gaEmbed');
+    const { geoApisInitialized } = gaEmbedService;
+    if (!geoApisInitialized) { gaEmbedService.initializeGeoApis(); }
 
   }
 

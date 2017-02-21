@@ -24,12 +24,13 @@ Check out the [Embed API demos](https://ga-dev-tools.appspot.com/embed-api/) pag
 
 ## Setup
 
-To authorize your application to access the Google Analytics API, you must create a Client ID from the [Google API Console](https://console.developers.google.com/). When you've obtained your Client ID, add it to your environment file.
+To authorize your application to access the [Google Analytics API](https://developers.google.com/analytics/devguides/config), you must create a Client ID from the [Google API Console](https://console.developers.google.com/). When you've obtained your Client ID, add it to your environment file. If you are using Geo Charts, you must also include an API Key, for accessing the [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript). Both these APIs must be enabled from your API console and have the right origins/referrers set.
 
 ```javascript
 // config/environment.js
 ENV['google-analytics-embed'] = {
-  clientId: 'YOUR_CLIENT_ID'
+  clientId: 'YOUR_CLIENT_ID',
+  apiKey: 'YOUR_API_KEY'
 };
 ```
 
@@ -137,7 +138,7 @@ Creates a column chart visualization and accepts the following configuration [op
 
 #### Geo Chart
 
-Creates a geo chart visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart#configuration-options).
+Creates a geo chart visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart#configuration-options). This component lazy-loads the Google Maps Geocoding API.
 
 The region property can be dynamically updated and is validated before the chart is updated to ensure a [valid region code](https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart#continent-hierarchy-and-codes) is used.
 

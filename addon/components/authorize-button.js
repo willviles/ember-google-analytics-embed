@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-const { assert, get, inject: { service }, observer, set } = Ember;
+const { assert, assign, get, inject: { service }, observer, set } = Ember;
 
 export default Ember.Component.extend({
 
@@ -20,15 +20,20 @@ export default Ember.Component.extend({
   },
 
   authorize() {
-    const clientId = get(this, 'clientId');
-    const clientid = clientId || get(this, 'gaEmbed.config.clientId');
+    const clientid = get(this, 'clientId') || get(this, 'gaEmbed.config.clientId');
 
     assert('[ember-google-analytics-embed] No Google Analytics clientId set in config/environment.js', clientid);
 
-    let authorize = window.gapi.analytics.auth.authorize({
+    let params = {
       container: this.elementId,
       clientid
-    });
+    };
+
+    const apiKey = get(this, 'apiKey') || get(this, 'gaEmbed.config.apiKey');
+
+    if (apiKey) { assign(params, { apiKey }); }
+
+    let authorize = window.gapi.analytics.auth.authorize(params);
 
     authorize.on('success', () => {
       set(this, 'gaEmbed.isAuthorized', true);
