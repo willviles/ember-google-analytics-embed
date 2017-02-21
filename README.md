@@ -166,6 +166,16 @@ Creates a table visualization and accepts the following configuration [options](
 {{ga-embed-table query=query options=options}}
 ```
 
+---
+
+### Loading State
+
+Each visualization has a loading state class of `.ga-embed-visualization-loading`, which you can customise in your CSS.
+
+### Auto Resizing
+
+By default, visualizations auto resize on window resize. To disable auto resizing, set `responsiveResize=false` on the visualization.
+
 ## View Selection
 
 The `ga-embed-view-selector` component allows the user to select a view from any property they are authorized to view. Add the view selector component to your template.
