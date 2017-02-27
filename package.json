@@ -16,12 +16,16 @@
     "visualizations"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "Will Viles <will@vil.est>",
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "homepage": "https://github.com/willviles/ember-google-analytics-embed",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/willviles/ember-google-analytics-embed.git"
+  },
   "scripts": {
     "build": "ember build",
     "start": "ember server",
