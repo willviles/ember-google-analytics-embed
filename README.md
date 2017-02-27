@@ -166,7 +166,7 @@ To transform a pie chart into a donut chart, simply add a value for the pie hole
 
 #### Table
 
-Creates a table visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/tablechart#configuration-options).
+Creates a table visualization and accepts the following configuration [options](https://google-developers.appspot.com/chart/interactive/docs/gallery/table#configuration-options).
 
 ```handlebars
 {{ga-embed-table query=query options=options}}
