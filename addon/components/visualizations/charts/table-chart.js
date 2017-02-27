@@ -2,10 +2,7 @@ import BaseChartVisualization from 'ember-google-analytics-embed/components/visu
 
 export default BaseChartVisualization.extend({
 
-  chart: {
-    type: 'TABLE',
-    options: {}
-  },
+  chartType: 'TABLE',
 
   classNames: ['ga-embed-table'],
 

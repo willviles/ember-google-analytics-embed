@@ -6,14 +6,12 @@ const { get, getProperties, isBlank, set } = Ember;
 
 export default BaseVisualization.extend({
 
-  chart: {
-    options: {}
-  },
+  chartOptions: Ember.Object.create({}),
 
   classNames: ['ga-embed-chart'],
 
   mergeInitialOptions() {
-    set(this, 'chart.options', get(this, 'mergedOptions'));
+    set(this, 'chartOptions', get(this, 'mergedOptions'));
 
   },
 
@@ -27,7 +25,7 @@ export default BaseVisualization.extend({
 
   newVisualizationAttrs({ newAttrs }) {
     const visualizationOptions = get(this, 'visualizationOptions');
-    const chartOptions = get(this, 'chart.options');
+    const chartOptions = get(this, 'chartOptions');
 
     Object.keys(newAttrs).forEach(key => {
       // If key isn't present in accepted visualizationOptions, don't add it
@@ -52,13 +50,15 @@ export default BaseVisualization.extend({
   },
 
   updateVisualization() {
-    let { query, chart, visualization } = getProperties(this, 'query', 'chart', 'visualization');
+    let {
+      query, chartType, chartOptions, visualization
+    } = getProperties(this, 'query', 'chartType', 'chartOptions', 'visualization');
 
     if (!visualization) { return; }
 
-    query = pojo(query); chart = pojo(chart);
+    query = pojo(query); chartOptions = pojo(chartOptions);
 
-    visualization.set({ query, chart });
+    visualization.set({ query, chart: { type: chartType, options: chartOptions } });
 
     this.execute();
 

@@ -7,10 +7,7 @@ const {
 
 export default BaseChartVisualization.extend({
 
-  chart: {
-    type: 'GEO',
-    options: {}
-  },
+  chartType: 'GEO',
 
   classNames: ['ga-embed-geo-chart'],
 
@@ -47,7 +44,7 @@ export default BaseChartVisualization.extend({
   _regions: ['002', '015', '011', '017', '014', '018', '150', '154', '155', '151', '039', '019', '021', '029', '013', '005', '142', '143', '030', '034', '035', '145', '009', '053', '054', '057', '061'],
 
   _validateRegion() {
-    const chartOptions = get(this, 'chart.options');
+    const chartOptions = get(this, 'chartOptions');
     const region = get(chartOptions, 'region');
 
     if (isEmpty(region)) { return; }
