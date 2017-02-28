@@ -36,7 +36,9 @@ ENV['google-analytics-embed'] = {
 
 
 ## Authorization
-Each user will need to have access to the GA account queried and authorize themselves. Adding the `ga-embed-authorize` component to your templates will create a 'Sign in to Google Analytics' button and handle authorization automatically:
+There are two ways to authorize users: through the authorization flow, requiring a user to click and authenticate, or via an access token sent from your server.
+
+Adding the base `ga-embed-authorize` component to your templates will create a 'Sign in to Google Analytics' button and handle the authorization flow automatically:
 
 ```handlebars
 {{ga-embed-authorize}}
@@ -74,8 +76,11 @@ actions: {
 ```
 
 ### Access Token Authorization
-To remove the process of user authorization, you may return an access token from your server. This functionality is not yet implemented in Ember Google Analytics Embed, but you can find more information on server side authorization [here](https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/).
+To remove the user auth flow, you may return an access token from your server. Simply pass the access token to the `ga-embed-authorize` component. You can find more information on setting up server side authorization [here](https://ga-dev-tools.appspot.com/embed-api/server-side-authorization/).
 
+```handlebars
+{{ga-embed-authorize accessToken=analyticsAccessToken}}
+```
 
 ## Visualizations
 
