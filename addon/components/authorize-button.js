@@ -20,6 +20,9 @@ export default Ember.Component.extend({
   },
 
   authorize() {
+
+    if (get(this, 'accessToken')) { return this.authorizeWithAccessToken(); }
+
     const clientid = get(this, 'clientId') || get(this, 'gaEmbed.config.clientId');
 
     assert('[ember-google-analytics-embed] No Google Analytics clientId set in config/environment.js', clientid);
@@ -33,11 +36,40 @@ export default Ember.Component.extend({
 
     if (apiKey) { assign(params, { apiKey }); }
 
+    this._authorize(params);
+
+  },
+
+  authorizeWithAccessToken() {
+
+    this._authorize({
+      'serverAuth': {
+        'access_token': get(this, 'accessToken')
+      }
+    });
+
+    set(this, 'gaEmbed.isAuthorized', true);
+    this.sendAction('onSignIn');
+
+  },
+
+  _authorize(params) {
     let authorize = window.gapi.analytics.auth.authorize(params);
 
-    authorize.on('success', () => {
+    authorize.on('signIn', () => {
       set(this, 'gaEmbed.isAuthorized', true);
+      this.sendAction('onSignIn');
 
+    });
+
+    authorize.on('signOut', () => {
+      set(this, 'gaEmbed.isAuthorized', false);
+      this.sendAction('onSignOut');
+
+    });
+
+    authorize.on('error', (err) => {
+      this.sendAction('onError', err);
     });
 
   },
