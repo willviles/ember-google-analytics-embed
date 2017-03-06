@@ -17,6 +17,7 @@ export default BaseVisualization.extend({
 
   createVisualization() {
     const container = this.elementId;
+
     return new window.gapi.analytics.googleCharts.DataChart({
       chart: { container }
     });
@@ -54,7 +55,7 @@ export default BaseVisualization.extend({
       query, chartType, chartOptions, visualization
     } = getProperties(this, 'query', 'chartType', 'chartOptions', 'visualization');
 
-    if (!visualization) { return; }
+    if (!visualization || get(this, 'isDestroyed')) { return; }
 
     query = pojo(query); chartOptions = pojo(chartOptions);
 

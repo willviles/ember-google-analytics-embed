@@ -48,7 +48,8 @@ export default Ember.Component.extend({
   },
 
   _createVisualization() {
-    if (isPresent(get(this, 'visualization'))) { return; }
+    if (isPresent(get(this, 'visualization')) ||
+        get(this, 'isDestroyed')) { return; }
 
     let visualization = this.createVisualization();
 
@@ -80,6 +81,8 @@ export default Ember.Component.extend({
 
   newVisualizationAttrs() {
 
+    if (get(this, 'isDestroyed')) { return; }
+
     const debounce = get(this, 'debounce');
 
     if (debounce && typeOf(debounce) === 'number') {
@@ -88,6 +91,7 @@ export default Ember.Component.extend({
       );
 
       set(this, '_willUpdateVisualization', run.later(this, () => {
+        if (get(this, 'isDestroyed')) { return; }
         this.willUpdateVisualization();
       }, debounce / 2));
 
@@ -114,6 +118,8 @@ export default Ember.Component.extend({
   },
 
   execute() {
+    if (get(this, 'isDestroyed')) { return; }
+
     const debounce = get(this, 'debounce');
 
     if (debounce && typeOf(debounce) === 'number') {
@@ -178,5 +184,12 @@ export default Ember.Component.extend({
     this.updateVisualization();
 
   },
+
+  willDestroyElement() {
+    run.cancel(get(this, 'willExecute'));
+    run.cancel(get(this, '_willUpdateVisualization'));
+    $(window).off(`resize.${get(this, 'elementId')}`);
+
+  }
 
 });
