@@ -76,7 +76,7 @@ export default Ember.Service.extend(Ember.Evented, {
     (function(w,d,s,m,js,fjs){
       js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
       js.src=m;fjs.parentNode.insertBefore(js,fjs);
-    }(window,document,'script',`http://maps.googleapis.com/maps/api/js?key=${apiKey}`));
+    }(window,document,'script',`https://maps.googleapis.com/maps/api/js?key=${apiKey}`));
     /* jshint ignore:end */
 
     set(this, 'geoApisInitialized', true);
