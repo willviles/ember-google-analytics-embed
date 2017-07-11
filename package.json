@@ -1,6 +1,6 @@
 {
   "name": "ember-google-analytics-embed",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "An Ember.js Addon for adding analytics visualizations using the Google Analytics Embed API.",
   "keywords": [
     "ember-addon",
