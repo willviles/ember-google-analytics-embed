@@ -1,13 +1,9 @@
-/* jshint node: true */
-/* global require */
-
-// To use the dummy app, export your client id from '/tests/dummy/config/ga-client-id.js'
-var keys = require('./keys');
+/* eslint-env node */
 
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'dummy',
-    environment: environment,
+    environment,
     rootURL: '/',
     locationType: 'auto',
     EmberENV: {
@@ -28,8 +24,8 @@ module.exports = function(environment) {
   };
 
   ENV['google-analytics-embed'] = {
-    clientId: keys.clientId,
-    apiKey: keys.apiKey
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    apiKey: process.env.GOOGLE_API_KEY
   };
 
   if (environment === 'development') {
