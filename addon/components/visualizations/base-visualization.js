@@ -1,13 +1,15 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { A } from '@ember/array';
+import { assert } from '@ember/debug';
+import { computed, get, getWithDefault, set, setProperties } from '@ember/object';
+import { assign } from '@ember/polyfills';
+import { cancel, debounce, later } from '@ember/runloop';
+import { inject as service } from '@ember/service';
+import { isBlank, isPresent, typeOf } from '@ember/utils';
 
-const {
-  $, assert, computed,
-  get, getWithDefault, inject: { service },
-  isBlank, isPresent, run, run: { debounce },
-  set, setProperties, typeOf
-} = Ember;
+import $ from 'jquery';
 
-export default Ember.Component.extend({
+export default Component.extend({
 
   gaEmbed: service(),
 
@@ -15,16 +17,19 @@ export default Ember.Component.extend({
   classNameBindings: ['isLoading:ga-embed-visualization-loading'],
 
   isLoading: true,
+  responsiveResize: true,
   debounce: false,
 
-  requiredOptions: [],
-  _requiredOptions: Ember.A(['query']),
+  init() {
+    this._super(...arguments);
+    set(this, '_requiredOptions', A(['query']));
+  },
 
   mergedOptions: computed('defaultOptions', 'options', function() {
-    const defaultOptions = getWithDefault(this, 'defaultOptions', {});
-    const options = getWithDefault(this, 'options', {});
+    let defaultOptions = getWithDefault(this, 'defaultOptions', {}),
+        options = getWithDefault(this, 'options', {});
 
-    return $.extend({}, defaultOptions, options);
+    return assign({}, defaultOptions, options);
   }),
 
   didInsertElement() {
@@ -73,24 +78,21 @@ export default Ember.Component.extend({
 
   didReceiveAttrs() {
     this._super(...arguments);
-
     this._mergeInitialOptions();
-    this.newVisualizationAttrs(...arguments);
-
+    this.newVisualizationAttrs();
   },
 
   newVisualizationAttrs() {
-
     if (get(this, 'isDestroyed')) { return; }
 
     const debounce = get(this, 'debounce');
 
     if (debounce && typeOf(debounce) === 'number') {
-      run.cancel(
+      cancel(
         get(this, '_willUpdateVisualization')
       );
 
-      set(this, '_willUpdateVisualization', run.later(this, () => {
+      set(this, '_willUpdateVisualization', later(this, () => {
         if (get(this, 'isDestroyed')) { return; }
         this.willUpdateVisualization();
       }, debounce / 2));
@@ -123,11 +125,11 @@ export default Ember.Component.extend({
     const debounce = get(this, 'debounce');
 
     if (debounce && typeOf(debounce) === 'number') {
-      run.cancel(
+      cancel(
         get(this, 'willExecute')
       );
 
-      set(this, 'willExecute', run.later(this, () => {
+      set(this, 'willExecute', later(this, () => {
         get(this, 'visualization').execute();
       }, debounce / 2));
 
@@ -139,7 +141,8 @@ export default Ember.Component.extend({
   },
 
   _assertRequiredOptions() {
-    const options = get(this, '_requiredOptions').pushObjects(get(this, 'requiredOptions')).uniq();
+    let requiredOptions = getWithDefault(this, 'requiredOptions', A([])),
+        options = get(this, '_requiredOptions').pushObjects(requiredOptions).uniq();
 
     options.forEach(key => {
       assert(`[ember-google-analytics-embed] No parameter '${key}' passed to ember-google-analytics-embed/components/visualizations/data-chart`, get(this, key));
@@ -148,14 +151,13 @@ export default Ember.Component.extend({
   },
 
   _getAttrValue(value) {
-
     if (isBlank(value)) { return value; }
 
     // If it's a mutable object, get the actual value
     if (typeof value === 'object') {
-      let objectKeys = Ember.A(Object.keys(value));
+      let objectKeys = A(Object.keys(value));
       if (objectKeys.any((objectkey) => objectkey.indexOf('MUTABLE_CELL') >= 0)) {
-        value = Ember.get(value, 'value');
+        value = get(value, 'value');
       }
     }
 
@@ -172,8 +174,6 @@ export default Ember.Component.extend({
 
   },
 
-  responsiveResize: true,
-
   _setResize() {
     if (!get(this, 'responsiveResize')) { return; }
     $(window).on(`resize.${get(this, 'elementId')}`, () => debounce(this, '_handleResize', 200));
@@ -186,8 +186,8 @@ export default Ember.Component.extend({
   },
 
   willDestroyElement() {
-    run.cancel(get(this, 'willExecute'));
-    run.cancel(get(this, '_willUpdateVisualization'));
+    cancel(get(this, 'willExecute'));
+    cancel(get(this, '_willUpdateVisualization'));
     $(window).off(`resize.${get(this, 'elementId')}`);
 
   }

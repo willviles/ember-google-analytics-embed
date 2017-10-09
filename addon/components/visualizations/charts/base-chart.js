@@ -1,17 +1,20 @@
-import Ember from 'ember';
 import BaseVisualization from 'ember-google-analytics-embed/components/visualizations/base-visualization';
 import pojo from 'ember-google-analytics-embed/utils/pojo';
 
-const { get, getProperties, isBlank, set } = Ember;
+import { get, getProperties, set } from '@ember/object';
 
 export default BaseVisualization.extend({
 
-  chartOptions: Ember.Object.create({}),
-
   classNames: ['ga-embed-chart'],
 
+  init() {
+    this._super(...arguments);
+    set(this, 'chartOptions', {});
+  },
+
   mergeInitialOptions() {
-    set(this, 'chartOptions', get(this, 'mergedOptions'));
+    let mergedOptions = get(this, 'mergedOptions');
+    set(this, 'chartOptions', mergedOptions);
 
   },
 
@@ -24,26 +27,25 @@ export default BaseVisualization.extend({
 
   },
 
-  newVisualizationAttrs({ newAttrs }) {
-    const visualizationOptions = get(this, 'visualizationOptions');
-    const chartOptions = get(this, 'chartOptions');
+  newVisualizationAttrs() {
+    let visualizationOptions = get(this, 'visualizationOptions'),
+        chartOptions = get(this, 'chartOptions');
 
-    Object.keys(newAttrs).forEach(key => {
-      // If key isn't present in accepted visualizationOptions, don't add it
-      if (!visualizationOptions.includes(key)) { return; }
+    let newValues = visualizationOptions.reduce((values, key) => {
+      let value = get(this, key);
+      value = this._getAttrValue(value);
+      values[key] = value;
+      return values;
+    }, {});
 
-      const value = this._getAttrValue(newAttrs[key]);
+    let changedValues = {};
 
-      // If value isn't null, set it as a chart option and return
-      if (!isBlank(value)) {
-        return set(chartOptions, key, value);
+    Object.keys(newValues).forEach(key => {
+      let value = newValues[key];
+      if (value !== chartOptions[key]) {
+        chartOptions[key] = value;
+        changedValues[key] = value;
       }
-
-      // Otherwise, if key is present in chartOptions, remove it
-      if (Object.keys(chartOptions).includes(key)) {
-        return delete chartOptions[key];
-      }
-
     });
 
     this._super(...arguments);
@@ -57,7 +59,8 @@ export default BaseVisualization.extend({
 
     if (!visualization || get(this, 'isDestroyed')) { return; }
 
-    query = pojo(query); chartOptions = pojo(chartOptions);
+    query = pojo(query);
+    chartOptions = pojo(chartOptions);
 
     visualization.set({ query, chart: { type: chartType, options: chartOptions } });
 
