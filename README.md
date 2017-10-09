@@ -256,10 +256,12 @@ get(this, 'gaEmbed').getData({
 
 ## Contributing
 
-A crude dummy app demonstrates all the functionality of the addon. To view the dummy app, clone the repo and export your client id from `tests/dummy/config/ga-client-id.js` like so:
+A crude dummy app demonstrates all the functionality of the addon. To view the dummy app, clone the repo and simply create a .env file with the following information:
 
-```javascript
-module.exports = 'YOUR_CLIENT_ID';
+```bash
+# .env
+GOOGLE_API_KEY=YOUR_API_KEY
+GOOGLE_CLIENT_ID=YOUR_CLIENT_ID
 ```
 
 Then start the server using:
