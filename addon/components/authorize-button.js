@@ -1,8 +1,11 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { assert } from '@ember/debug';
+import { assign } from '@ember/polyfills';
+import { get, observer, set } from '@ember/object';
+import { next } from '@ember/runloop';
+import { inject as service } from '@ember/service';
 
-const { assert, assign, get, inject: { service }, observer, set } = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
 
   gaEmbed: service(),
 
@@ -12,7 +15,7 @@ export default Ember.Component.extend({
   clientId: null,
 
   didInsertElement() {
-
+    this._super(...arguments);
     get(this, 'gaEmbed')._onApiReady(() => {
       this.authorize();
     });
@@ -40,6 +43,10 @@ export default Ember.Component.extend({
 
   },
 
+  onSignIn() {},
+  onSignOut() {},
+  onError() {},
+
   authorizeWithAccessToken() {
 
     this._authorize({
@@ -49,7 +56,8 @@ export default Ember.Component.extend({
     });
 
     set(this, 'gaEmbed.isAuthorized', true);
-    this.sendAction('onSignIn');
+    get(this, 'onSignIn')();
+    get(this, 'onSignOut')();
 
   },
 
@@ -58,27 +66,28 @@ export default Ember.Component.extend({
 
     authorize.on('signIn', () => {
       set(this, 'gaEmbed.isAuthorized', true);
-      this.sendAction('onSignIn');
+      get(this, 'onSignIn')();
 
     });
 
     authorize.on('signOut', () => {
       set(this, 'gaEmbed.isAuthorized', false);
-      this.sendAction('onSignOut');
+      get(this, 'onSignOut')();
 
     });
 
     authorize.on('error', (err) => {
-      this.sendAction('onError', err);
+      get(this, 'onError')(err);
     });
 
   },
 
+  // eslint-disable-next-line ember/no-observers
   hideOnAuthorize: observer('gaEmbed.isAuthorized', function() {
     const isAuthorized = get(this, 'gaEmbed.isAuthorized');
     let display = isAuthorized ? 'none' : 'block';
 
-    Ember.run.next(() => {
+    next(() => {
       this.$().css({ display });
     });
 

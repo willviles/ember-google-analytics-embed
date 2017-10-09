@@ -1,9 +1,8 @@
-import Ember from 'ember';
 import BaseChartVisualization from 'ember-google-analytics-embed/components/visualizations/charts/base-chart';
 
-const {
-  assert, get, isEmpty
-} = Ember;
+import { assert } from '@ember/debug';
+import { computed, get } from '@ember/object';
+import { isEmpty } from '@ember/utils';
 
 export default BaseChartVisualization.extend({
 
@@ -11,25 +10,27 @@ export default BaseChartVisualization.extend({
 
   classNames: ['ga-embed-geo-chart'],
 
-  visualizationOptions: [
-    'backgroundColor',
-    'colorAxis',
-    'datalessRegionColor',
-    'defaultColor',
-    'displayMode',
-    'domain',
-    'enableRegionInteractivity',
-    'height',
-    'keepAspectRatio',
-    'legend',
-    'region',
-    'magnifyingGlass',
-    'markerOpacity',
-    'resolution',
-    'sizeAxis',
-    'tooltip',
-    'width'
-  ],
+  visualizationOptions: computed(function() {
+    return [
+      'backgroundColor',
+      'colorAxis',
+      'datalessRegionColor',
+      'defaultColor',
+      'displayMode',
+      'domain',
+      'enableRegionInteractivity',
+      'height',
+      'keepAspectRatio',
+      'legend',
+      'region',
+      'magnifyingGlass',
+      'markerOpacity',
+      'resolution',
+      'sizeAxis',
+      'tooltip',
+      'width'
+    ];
+  }),
 
   willInsertElement() {
     this._super(...arguments);
@@ -41,7 +42,9 @@ export default BaseChartVisualization.extend({
     this._super(...arguments);
   },
 
-  _regions: ['002', '015', '011', '017', '014', '018', '150', '154', '155', '151', '039', '019', '021', '029', '013', '005', '142', '143', '030', '034', '035', '145', '009', '053', '054', '057', '061'],
+  _regions: computed(function() {
+    return ['002', '015', '011', '017', '014', '018', '150', '154', '155', '151', '039', '019', '021', '029', '013', '005', '142', '143', '030', '034', '035', '145', '009', '053', '054', '057', '061'];
+  }),
 
   _validateRegion() {
     const chartOptions = get(this, 'chartOptions');

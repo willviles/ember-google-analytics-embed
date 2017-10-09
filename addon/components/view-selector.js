@@ -1,10 +1,11 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { get, set } from '@ember/object';
 
-const { set } = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
 
   classNames: ['ga-embed-view-selector'],
+
+  onChange() {},
 
   didInsertElement() {
     let viewSelector = new window.gapi.analytics.ViewSelector({
@@ -17,8 +18,7 @@ export default Ember.Component.extend({
 
     viewSelector.on('change', (ids) => {
       set(this, 'ids', ids);
-      this.sendAction('onChange', ids);
-
+      get(this, 'onChange')(ids);
     });
 
   }

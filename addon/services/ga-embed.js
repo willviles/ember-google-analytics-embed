@@ -1,11 +1,18 @@
-import Ember from 'ember';
+import Service from '@ember/service';
+import { assert } from '@ember/debug';
+import Evented from '@ember/object/evented';
+import { get, set } from '@ember/object';
+import { defer, Promise } from 'rsvp';
 
-const { assert, get, set } = Ember;
+export default Service.extend(Evented, {
 
-export default Ember.Service.extend(Ember.Evented, {
+  init() {
+    this._super(...arguments);
+    this.on('apiReady', this.setAuthorizedUser);
+
+  },
 
   initialize() {
-
     if (typeof FastBoot !== 'undefined') { return; }
 
     /* jshint ignore:start */
@@ -24,13 +31,12 @@ export default Ember.Service.extend(Ember.Evented, {
 
   },
 
-  setAuthorizedUser: Ember.on('apiReady', function() {
+  setAuthorizedUser() {
     window.gapi.analytics.auth.on('signIn', () => {
       const userData = window.gapi.analytics.auth.getUserProfile();
       set(this, 'authorizedUser', userData);
     });
-
-  }),
+  },
 
   isAuthorized: false,
 
@@ -45,7 +51,7 @@ export default Ember.Service.extend(Ember.Evented, {
 
   signOut() {
     return this._onApiReady(() => {
-      return new Ember.RSVP.Promise((resolve) => {
+      return new Promise((resolve) => {
         const auth = window.gapi.analytics.auth;
         auth.signOut();
         auth.on('signOut', () => {
@@ -89,8 +95,7 @@ export default Ember.Service.extend(Ember.Evented, {
 
     assert(`[ember-google-analytics-embed] no authorized user whilst trying to access getData() ember-google-analytics-embed/services/ga-embed`, this._isAuthorized());
 
-    return new Ember.RSVP.Promise((resolve, reject) => {
-
+    return new Promise((resolve, reject) => {
       // Buffer to ensure API is ready
       this._onApiReady(() => {
         let request = new window.gapi.analytics.report.Data({ query });
@@ -107,13 +112,13 @@ export default Ember.Service.extend(Ember.Evented, {
 
     if (get(this, 'apiReady')) { return callback(); }
 
-    let defer = Ember.RSVP.defer();
+    let whenReady = defer();
 
     window.gapi.analytics.ready(() => {
-      defer.resolve(callback());
+      whenReady.resolve(callback());
     });
 
-    return defer.promise.then(res => {
+    return whenReady.promise.then(res => {
       return res;
     });
 

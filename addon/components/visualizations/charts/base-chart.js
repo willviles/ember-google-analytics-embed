@@ -62,6 +62,7 @@ export default BaseVisualization.extend({
     query = pojo(query);
     chartOptions = pojo(chartOptions);
 
+    // eslint-disable-next-line ember/use-ember-get-and-set
     visualization.set({ query, chart: { type: chartType, options: chartOptions } });
 
     this.execute();
