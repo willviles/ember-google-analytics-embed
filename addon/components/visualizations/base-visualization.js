@@ -198,7 +198,8 @@ export default Component.extend({
 
   willDestroyElement() {
     $(window).off(`resize.${get(this, 'elementId')}`);
-
+    get(this, 'update').cancelAll();
+    get(this, '_updateVisualization').cancelAll();
   }
 
 });
