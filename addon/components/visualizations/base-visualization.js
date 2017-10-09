@@ -1,11 +1,13 @@
 import Component from '@ember/component';
 import { A } from '@ember/array';
 import { assert } from '@ember/debug';
-import { computed, get, getWithDefault, set, setProperties } from '@ember/object';
+import { computed, get, getProperties, getWithDefault, set, setProperties } from '@ember/object';
 import { assign } from '@ember/polyfills';
-import { cancel, debounce, later } from '@ember/runloop';
+import { debounce } from '@ember/runloop';
 import { inject as service } from '@ember/service';
-import { isBlank, isPresent, typeOf } from '@ember/utils';
+import { isBlank, isPresent } from '@ember/utils';
+
+import { task, timeout } from 'ember-concurrency';
 
 import $ from 'jquery';
 
@@ -20,15 +22,21 @@ export default Component.extend({
   responsiveResize: true,
   debounce: false,
 
-  init() {
-    this._super(...arguments);
-    set(this, '_requiredOptions', A(['query']));
-  },
+  _requiredOptions: computed(function() {
+    return A(['query']);
+  }),
+
+  defaultOptions: computed(function() {
+    return {};
+  }),
+
+  options: computed(function() {
+    return {};
+  }),
 
   mergedOptions: computed('defaultOptions', 'options', function() {
-    let defaultOptions = getWithDefault(this, 'defaultOptions', {}),
-        options = getWithDefault(this, 'options', {});
-
+    let { defaultOptions, options } = getProperties(this, 'defaultOptions', 'options');
+    if (!defaultOptions || !options) { return; }
     return assign({}, defaultOptions, options);
   }),
 
@@ -39,10 +47,10 @@ export default Component.extend({
     this._setResize();
 
     if (get(this, 'gaEmbed.apiReady')) {
-      this._updateVisualization();
+      this._createVisualization();
     } else {
       window.gapi.analytics.ready(() => {
-        this._updateVisualization();
+        this._createVisualization();
       });
     }
 
@@ -51,6 +59,8 @@ export default Component.extend({
   createVisualization() {
     assert(`[ember-google-analytics-embed] createVisualization() must be overridden when extending ember-google-analytics-embed/components/visualizations/base-visualization`);
   },
+
+  didCreateVisualization() {},
 
   _createVisualization() {
     if (isPresent(get(this, 'visualization')) ||
@@ -62,83 +72,94 @@ export default Component.extend({
 
     set(this, 'visualization', visualization);
 
-    this.didCreateVisualization();
+    this.newVisualizationAttrs();
 
-  },
-
-  didCreateVisualization() {
     get(this, 'visualization').on('success', data => {
       setProperties(this, {
         data,
         isLoading: false
       });
+      get(this, 'didCreateVisualization')(visualization);
     });
 
   },
 
   didReceiveAttrs() {
     this._super(...arguments);
-    this._mergeInitialOptions();
     this.newVisualizationAttrs();
   },
 
   newVisualizationAttrs() {
-    if (get(this, 'isDestroyed')) { return; }
+    this.mergeInitialAttrs();
 
-    const debounce = get(this, 'debounce');
+    let visualizationOptions = get(this, 'visualizationOptions'),
+        chartOptions = get(this, 'chartOptions');
 
-    if (debounce && typeOf(debounce) === 'number') {
-      cancel(
-        get(this, '_willUpdateVisualization')
-      );
+    if (!chartOptions || get(this, 'isDestroyed')) { return; }
 
-      set(this, '_willUpdateVisualization', later(this, () => {
-        if (get(this, 'isDestroyed')) { return; }
-        this.willUpdateVisualization();
-      }, debounce / 2));
+    let newValues = visualizationOptions.reduce((values, key) => {
+      let value = get(this, key);
+      value = this._getAttrValue(value);
+      values[key] = value;
+      return values;
+    }, {});
 
-    } else {
-      this.willUpdateVisualization();
+    let changedValues = {};
 
-    }
+    Object.keys(newValues).forEach(key => {
+      let value = newValues[key];
+      if (value !== chartOptions[key]) {
+        chartOptions[key] = value;
+        changedValues[key] = value;
+      }
+    });
+
+    get(this, '_updateVisualization').perform();
 
   },
 
-  willUpdateVisualization() {
+  mergeInitialAttrs() {
+    let isMerged = get(this, 'isMerged');
+    if (isMerged === true) { return; }
+
+    let mergedOptions = get(this, 'mergedOptions'),
+        chartOptions = getWithDefault(this, 'chartOptions', {});
+
+    Object.keys(mergedOptions).forEach(key => {
+      let value = mergedOptions[key];
+      if (value !== chartOptions[key]) {
+        chartOptions[key] = value;
+        set(this, key, value);
+      }
+    });
+
+    set(this, 'chartOptions', chartOptions);
+    set(this, 'isMerged', true);
+
+  },
+
+  willUpdateVisualization() {},
+
+  _updateVisualization: task(function* () {
+    if (get(this, 'isDestroyed')) { return; }
+    let debounce = getWithDefault(this, 'debounce', 0);
+    yield timeout(debounce);
+    this.willUpdateVisualization();
     this.updateVisualization();
 
-  },
+  }).drop(),
 
   updateVisualization() {
     assert(`[ember-google-analytics-embed] updateVisualization() must be overridden when extending ember-google-analytics-embed/components/visualizations/base-visualization`);
   },
 
-  _updateVisualization() {
-    this._createVisualization();
-    this.updateVisualization();
-
-  },
-
-  execute() {
+  update: task(function* () {
     if (get(this, 'isDestroyed')) { return; }
+    let debounce = getWithDefault(this, 'debounce', 0);
+    yield timeout(debounce);
+    get(this, 'visualization').execute();
 
-    const debounce = get(this, 'debounce');
-
-    if (debounce && typeOf(debounce) === 'number') {
-      cancel(
-        get(this, 'willExecute')
-      );
-
-      set(this, 'willExecute', later(this, () => {
-        get(this, 'visualization').execute();
-      }, debounce / 2));
-
-    } else {
-      get(this, 'visualization').execute();
-
-    }
-
-  },
+  }).drop(),
 
   _assertRequiredOptions() {
     let requiredOptions = getWithDefault(this, 'requiredOptions', A([])),
@@ -164,16 +185,6 @@ export default Component.extend({
     return value;
   },
 
-  _mergeInitialOptions() {
-    if (get(this, 'optionsMerged') === true) { return; }
-    set(this, 'optionsMerged', true);
-
-    if (typeOf(this.mergeInitialOptions) === 'function') {
-      this.mergeInitialOptions();
-    }
-
-  },
-
   _setResize() {
     if (!get(this, 'responsiveResize')) { return; }
     $(window).on(`resize.${get(this, 'elementId')}`, () => debounce(this, '_handleResize', 200));
@@ -186,8 +197,6 @@ export default Component.extend({
   },
 
   willDestroyElement() {
-    cancel(get(this, 'willExecute'));
-    cancel(get(this, '_willUpdateVisualization'));
     $(window).off(`resize.${get(this, 'elementId')}`);
 
   }
