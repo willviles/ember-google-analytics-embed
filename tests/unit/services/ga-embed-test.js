@@ -1,6 +1,6 @@
 import { moduleFor, test } from 'ember-qunit';
 
-moduleFor('service:google-analytics-embed', 'Unit | Service | google analytics embed', {
+moduleFor('service:ga-embed', 'Unit | Service | ga embed', {
   // Specify the other units that are required for this test.
   // needs: ['service:foo']
 });

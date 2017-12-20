@@ -1,16 +1,14 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
+import { get, set, setProperties } from '@ember/object';
+import { inject as service } from '@ember/service';
+import RSVP from 'rsvp';
 
-const {
-  get, inject: { service },
-  set, setProperties
-} = Ember;
-
-export default Ember.Route.extend({
+export default Route.extend({
 
   gaEmbed: service(),
 
   model() {
-    return Ember.RSVP.resolve({
+    return RSVP.resolve({
       viewIds: null,
       lineChartTitle: 'You may change this title in the text box below',
       barChartTimeframe: '30daysAgo',
@@ -49,12 +47,12 @@ export default Ember.Route.extend({
 
     signOut() {
       get(this, 'gaEmbed').signOut().then(msg => {
+        // eslint-disable-next-line
         console.log(msg);
       });
     },
 
     getCustomData() {
-
       const viewIds = get(this, 'controller.viewIds');
 
       if (!viewIds) { return; }
@@ -66,8 +64,10 @@ export default Ember.Route.extend({
         'start-date': '30daysAgo',
         'end-date': 'yesterday'
       }).then(data => {
+        // eslint-disable-next-line
         console.log(data);
       }).catch(err => {
+        // eslint-disable-next-line
         console.log(err);
       });
 

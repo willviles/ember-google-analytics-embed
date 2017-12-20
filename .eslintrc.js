@@ -4,6 +4,7 @@ module.exports = {
     'plugin:ember/recommended'
   ],
   rules: {
+    'ember/named-functions-in-promises': 0,
     'ember/order-in-components': 0
   }
 };

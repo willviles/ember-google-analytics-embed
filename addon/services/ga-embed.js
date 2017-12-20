@@ -4,11 +4,13 @@ import Evented from '@ember/object/evented';
 import { get, set } from '@ember/object';
 import { defer, Promise } from 'rsvp';
 
-export default Service.extend(Evented, {
+export default Service.extend(
+  Evented, {
 
   init() {
     this._super(...arguments);
     this.on('apiReady', this.setAuthorizedUser);
+    this.initialize();
 
   },
 

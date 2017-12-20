@@ -1,8 +1,6 @@
-import Ember from 'ember';
+import { computed, get } from '@ember/object';
 import GAEmbedService from 'ember-google-analytics-embed/services/ga-embed';
 import config from '../config/environment';
-
-const { computed, get } = Ember;
 
 export default GAEmbedService.reopen({
   config: computed(function() {
