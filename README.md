@@ -1,5 +1,7 @@
-Ember Google Analytics Embed ![Download count all time](https://img.shields.io/npm/dt/ember-google-analytics-embed.svg) [![npm](https://img.shields.io/npm/v/ember-google-analytics-embed.svg)](https://www.npmjs.com/package/ember-google-analytics-embed)
+Ember Google Analytics Embed
 ======
+
+[![Build Status](https://travis-ci.org/willviles/ember-google-analytics-embed.svg)](https://travis-ci.org/willviles/ember-google-analytics-embed) [![Ember Observer Score](http://emberobserver.com/badges/ember-google-analytics-embed.svg)](http://emberobserver.com/addons/ember-google-analytics-embed) ![Download count all time](https://img.shields.io/npm/dt/ember-google-analytics-embed.svg) [![npm](https://img.shields.io/npm/v/ember-google-analytics-embed.svg)](https://www.npmjs.com/package/ember-google-analytics-embed)
 
 **Ember Google Analytics Embed** is an addon for quickly building custom Google Analytics dashboards in your Ember.js app, using the [Google Analytics Embed API](https://developers.google.com/analytics/devguides/reporting/embed/v1/).
 
